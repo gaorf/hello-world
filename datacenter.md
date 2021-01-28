@@ -55,7 +55,7 @@
 | 8 | is_read | tinyint | 临时抓取数据用 |
 
 
-### 基础信息统计表-按照街道(street_data)
+### 基础信息统计表-按照街道(data_month)
 | 编号 | 字段名 | 类型 | 备注 |
 | ----: | :--- |:-- |:--- |
 | 1 | id |int(11)| Id |
@@ -87,10 +87,11 @@
 | 27 | community_house_f | int | 项目户数第一等级5001以上小区数量 |
 | 28 | land_online | decimal(20,2) | 土地挂牌量 |
 | 29 | land_finish | decimal(20,2) | 土地成交量 |
-| 30 | land_rate | decimal(6,2) | 土地成交率 |
+| -- | land_floor_price | decimal(6,2) | 楼面地价 |
+| -- | land_premium_rate | decimal(6,2) | 溢价率率 |
 | 31 | newhouse_online | int | 新房挂牌 |
 | 32 | newhouse_finish | int | 新房成交量 |
-| 33 | newhouse_finish_price | decimal(8,2) | 新房成交均价 |
+| 33 | newhouse_finish_price | decimal(12,2) | 新房成交均价 |
 | 34 | newhouse_rate | decimal(6,2) | 新房成交率 |
 | 35 | house_finish_tow_apartment | int | 房屋成交二居室户型数量 |
 | 36 | house_finish_three_apartment | int | 房屋成交三居室户型数量 |
@@ -102,15 +103,18 @@
 | 42 | house_finish_four_age | int | 房屋成交年龄结构数量 45岁以上|
 | 43 | eshouse_online | int | 二手房挂牌 |
 | 44 | eshouse_finish | int | 二手房成交 |
-| 45 | sfhouse_online | int | 拍卖挂牌 |
-| 46 | sfhouse_finish | int | 拍卖成交 |
+| -- | erhouse_online_price|decimal(12,2)|二手房挂牌均价|
+| -- | sfhouse_online | int | 司法拍卖挂牌数量 |
+| -- | sfhouse_finish | int | 司法拍卖挂牌数量 |
+| -- | sfhouse_online_price | decimal(12,2) | 司法拍卖挂牌均价 |
 | 47 | zlhouse_online | int | 租赁挂牌 |
 | 48 | zlhouse_finish | int | 租赁成交 |
+| -- | zlhouse_online_price |decimal(12,2)|租金均价|
 | 49 | create_time | datetime | 添加时间 |
 | 50 | up_time | datetime | 更新时间 |
 
 
-### 基础信息统计表-按照城市(street_data)  更新年
+### 基础信息统计表-按照城市(data_year)  更新年
 
 | 编号 | 字段名 | 类型 | 备注 |
 | ---: | :--- |:--- |:--- |
@@ -129,28 +133,29 @@
 | 13 | up_time | datetime | 更新时间 |
 
 
-### 小区附加信息表
+### 小区附加信息表(data_community140000)
 | 字段名 | 类型 | 备注 |
 | :--- |:--- |:--- |
 | id | int | Id |
+| city | char(4) | 城市 |
 | com_id | int | 小区Id |
 | year | year | 年 |
 | month | tinyint | 月 |
-| mai_price | decimal(8,2) | 小区成交均价 |
-| zu_price | decimal() | 小区租赁均价 |
-|多个|tinyint|小区综合指数|
-|多个|tinyint|价值指数|
-|多个|tinyint|品质指数|
-|多个|tinyint个|便利指数|
-|多个|tinyint|热度指数|
-|多个|tinyint|舒适指数|
-|多个|int|出售挂牌|
-|多个|int|合租|
-|多个|decimal(6,2)|出售成交率|
-|多个|int|出租挂牌|
-|多个|decimal(6,2)|出租成交率|
-|多个|int|赞|
-|多个|int|踩|
+| sell_price | decimal(8,2) | 小区成交均价 |
+| rent_price | decimal() | 小区租赁均价 |
+| xq_index |tinyint|小区综合指数|
+|jg_index|tinyint|价值指数|
+|pz_index|tinyint|品质指数|
+|bl_index|tinyint个|便利指数|
+|rd_index|tinyint|热度指数|
+|ss_index|tinyint|舒适指数|
+|sell|int|出售挂牌|
+|joint_rent|int|合租|
+|sell_rate|decimal(6,2)|出售成交率|
+|rent|int|出租挂牌|
+|rent_rate|decimal(6,2)|出租成交率|
+|good|int|赞|
+|bad|int|踩|
 | create_time | datetime | 添加时间 |
 | up_time | datetime | 更新时间 |
 
@@ -173,7 +178,7 @@
     `综合指数 = 价值指数*25% + 品质指数*10% + 舒适指数*20% + 便利指数*30% + 热度指数*15%`
 + ## 价值指数
     `价值指数 = 出售指数 * 50% * (1 ± 区划出售价格涨跌率) + 出租指数 * 50% * (1 ± 区划出租价格涨跌率) `  
-    出售指数= ((本项目价格 - 同城最小价格) / (同城最大价格- 同城最小价格) * 100 ) * (1 ± 区涨跌率) 
+    出售指数= ((本项目价格 - 同城最小价格) / (同城最大价格- 同城最小价格) * 100 ) * (1 ± 区涨跌率)   
     出租指数= ((本项目价格 - 同城最小价格) / (同城最大价格- 同城最小价格) * 100 ) * (1 ± 区涨跌率) 
     > 本项目成交均价、本城市成交最大、最小价格、区县涨跌率  
     > 本项目出租均价、本城市出租最大、最小价格、区县涨跌率
